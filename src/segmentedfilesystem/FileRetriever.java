@@ -1,13 +1,27 @@
 package segmentedfilesystem;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.io.IOException;
 
 public class FileRetriever {
-
+        InetAddress server;
+        int port = 0;
 	public FileRetriever(String server, int port) {
-        // Save the server and port for use in `downloadFiles()`
-        //...
+
+                this.port = port;
+                try {
+                        this.server = InetAddress.getLocalHost();
+                } catch (UnknownHostException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                }     
 	}
 
-	public void downloadFiles() {
+        
+
+	public void downloadFiles() throws IOException {
         // Do all the heavy lifting here.
         // This should
         //   * Connect to the server
@@ -20,6 +34,32 @@ public class FileRetriever {
         // PacketManager.allPacketsReceived() that you could
         // call for that, but there are a bunch of possible
         // ways.
+                byte buf[] = new byte[0];
+                byte buf2[] = new byte[1028];
+                DatagramSocket ds = new DatagramSocket();
+                DatagramPacket send = new DatagramPacket(buf, 0, server, port);
+                ds.send(send);
+                while (true){
+                        send = new DatagramPacket(buf2, buf2.length);
+                        ds.receive(send);
+                        //String received = new String(send.getData(), 0, send.getLength());
+                        PacketManager(send.getData(), send.getLength());
+                }
 	}
+        public void PacketManager(byte[] data, int length){
+                if ((data[0]%2)==0){
+                   HandleHeader(data, length);     
+                }
+                else HandleData(data, length);
+        }
 
+        public void HandleHeader(byte[] data, int length){
+                for (int i = 2; i<length; i++){
+                        
+                }
+        }
+        public void HandleData(byte[] data, int length){
+
+        }
+        
 }
