@@ -8,6 +8,7 @@ import java.io.IOException;
 public class FileRetriever {
         InetAddress server;
         int port = 0;
+
 	public FileRetriever(String server, int port) {
 
                 this.port = port;
@@ -48,18 +49,23 @@ public class FileRetriever {
 	}
         public void PacketManager(byte[] data, int length){
                 if ((data[0]%2)==0){
+                System.out.println("Header");
                    HandleHeader(data, length);     
                 }
-                else HandleData(data, length);
+                
+                else {HandleData(data, length);
+                System.out.println("not Header");}
         }
 
         public void HandleHeader(byte[] data, int length){
-                for (int i = 2; i<length; i++){
-                        
-                }
+                HeaderPacket header = new HeaderPacket(data, length);
+                ReceivedFile.AddHeader(header, length);
+                System.out.println(header.name);  
         }
         public void HandleData(byte[] data, int length){
-
+                DataPacket dataPacket = new DataPacket(data, length);
+                ReceivedFile.AddData(dataPacket, length);
+                     
         }
         
 }
