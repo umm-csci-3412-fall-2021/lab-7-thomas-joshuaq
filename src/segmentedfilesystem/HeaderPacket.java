@@ -5,21 +5,18 @@ import java.util.SortedMap;
 
 
 public class HeaderPacket{
-    byte name[];
-    Byte data[];
+    byte[] name;
+    byte[] data;
     int length;
     Byte id;
     public HeaderPacket(byte[] array, int length){
-        byte[] newArr = new byte[array.length-2];
-        for(int i = 0; i<newArr.length; i++){
+        byte[] newArr = new byte[length-2];
+        for(int i = 0; i < length - 2; i++){
             newArr[i] = array[i+2];
         }
         name = newArr;
         id = array[1];
     }
-// private Byte getName(){
-//     return this.name;
-// }
 
 private int getLength(){
     return this.getLength();

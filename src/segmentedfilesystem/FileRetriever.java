@@ -40,31 +40,42 @@ public class FileRetriever {
                 DatagramSocket ds = new DatagramSocket();
                 DatagramPacket send = new DatagramPacket(buf, 0, server, port);
                 ds.send(send);
+                PacketManager packetManager = new PacketManager();
                 while (true){
                         send = new DatagramPacket(buf2, buf2.length);
                         ds.receive(send);
                         //String received = new String(send.getData(), 0, send.getLength());
-                        PacketManager(send.getData(), send.getLength());
+                        //PacketManager(send.getData(), send.getLength());
+                        packetManager.addPacket(send.getData(), send.getLength());
+                        if(packetManager.isDone() == true){
+                                System.out.println("done");
+                                break;
+                        }
                 }
 	}
         public void PacketManager(byte[] data, int length){
-                if ((data[0]%2)==0){
-                System.out.println("Header");
-                   HandleHeader(data, length);     
-                }
                 
-                else {HandleData(data, length);
-                System.out.println("not Header");}
+                if ((Byte.toUnsignedInt(data[0]) % 2 ) == 0){
+                        System.out.println((Byte.toUnsignedInt(data[0]) % 2 ) == 0);
+                        HandleHeader(data, length);     
+                }
+                else {HandleData(data, length);}
         }
 
         public void HandleHeader(byte[] data, int length){
                 HeaderPacket header = new HeaderPacket(data, length);
-                ReceivedFile.AddHeader(header, length);
-                System.out.println(header.name);  
+                //ReceivedFile.AddHeader(header, length);
+                // try {
+                //         System.out.write(header.name);
+                // } catch (IOException e) {
+                //         // TODO Auto-generated catch block
+                //         e.printStackTrace();
+                // }
+      
         }
         public void HandleData(byte[] data, int length){
                 DataPacket dataPacket = new DataPacket(data, length);
-                ReceivedFile.AddData(dataPacket, length);
+                //ReceivedFile.AddData(dataPacket, length);
                      
         }
         
