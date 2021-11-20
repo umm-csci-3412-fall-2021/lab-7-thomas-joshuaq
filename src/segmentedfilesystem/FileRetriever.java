@@ -1,25 +1,41 @@
 package segmentedfilesystem;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.io.IOException;
 
 public class FileRetriever {
+        InetAddress server;
+        int port = 0;
 
 	public FileRetriever(String server, int port) {
-        // Save the server and port for use in `downloadFiles()`
-        //...
+                this.port = port;
+                try {
+                        this.server = InetAddress.getByName(server);
+                        
+                } catch (UnknownHostException e) {
+                        e.printStackTrace();
+                }     
 	}
 
-	public void downloadFiles() {
-        // Do all the heavy lifting here.
-        // This should
-        //   * Connect to the server
-        //   * Download packets in some sort of loop
-        //   * Handle the packets as they come in by, e.g.,
-        //     handing them to some PacketManager class
-        // Your loop will need to be able to ask someone
-        // if you've received all the packets, and can thus
-        // terminate. You might have a method like
-        // PacketManager.allPacketsReceived() that you could
-        // call for that, but there are a bunch of possible
-        // ways.
+	public void downloadFiles() throws IOException {
+                byte buf[] = new byte[0];
+                byte buf2[] = new byte[1028];
+                DatagramSocket ds = new DatagramSocket();
+                DatagramPacket send = new DatagramPacket(buf, 0, server, port);
+                //Send empty packet so server will send us the packets
+                ds.send(send);
+                PacketManager packetManager = new PacketManager();
+                while (true){
+                        send = new DatagramPacket(buf2, buf2.length);
+                        ds.receive(send);
+                        packetManager.addPacket(send.getData(), send.getLength());
+                        //Checks if all the packets have arrived
+                        if(packetManager.isDone() == true){
+                                packetManager.writeAllToDisk();
+                                break;
+                        }
+                }
 	}
-
 }
